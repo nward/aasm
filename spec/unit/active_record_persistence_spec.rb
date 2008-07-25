@@ -42,10 +42,19 @@ begin
     end    
     include AASM
   end
+  
+  class Cleaver < ActiveRecord::Base
+  end
 
   class June < ActiveRecord::Base
     include AASM
     aasm_column :status
+    belongs_to :cleaver
+
+    def self.table_exists?
+      true
+    end
+    @columns = [ActiveRecord::ConnectionAdapters::Column.new('cleaver_id', nil, 'integer', false)]
   end
   
   class Beaver < June
@@ -197,6 +206,10 @@ begin
     
     it "should have the same column as it's parent" do
       Beaver.aasm_column.should == :status
+    end
+    
+    it "should have the same reflections as June" do
+      Beaver.reflections.should == June.reflections
     end
   end
   

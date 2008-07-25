@@ -18,6 +18,7 @@ module AASM
     base.class_eval do
       def base.inherited(klass)
         AASM::StateMachine[klass] = AASM::StateMachine[self].dup
+        super
       end
     end
   end
