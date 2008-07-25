@@ -26,18 +26,18 @@ module AASM
   module ClassMethods
     def aasm_initial_state(set_state=nil)
       if set_state
-        AASM::StateMachine[self].initial_state = set_state
+        aasm_state_machine.initial_state = set_state
       else
-        AASM::StateMachine[self].initial_state
+        aasm_state_machine.initial_state
       end
     end
     
     def aasm_initial_state=(state)
-      AASM::StateMachine[self].initial_state = state
+      aasm_state_machine.initial_state = state
     end
     
     def aasm_state(name, options={})
-      sm = AASM::StateMachine[self]
+      sm = aasm_state_machine
       sm.create_state(name, options)
       sm.initial_state = name unless sm.initial_state
 
@@ -47,7 +47,7 @@ module AASM
     end
     
     def aasm_event(name, options = {}, &block)
-      sm = AASM::StateMachine[self]
+      sm = aasm_state_machine
       
       unless sm.events.has_key?(name)
         sm.events[name] = AASM::SupportingClasses::Event.new(name, options, &block)
@@ -63,15 +63,19 @@ module AASM
     end
 
     def aasm_states
-      AASM::StateMachine[self].states
+      aasm_state_machine.states
     end
 
     def aasm_events
-      AASM::StateMachine[self].events
+      aasm_state_machine.events
     end
     
     def aasm_states_for_select
-      AASM::StateMachine[self].states.map { |state| state.for_select }
+      aasm_state_machine.states.map { |state| state.for_select }
+    end
+    
+    def aasm_state_machine
+      AASM::StateMachine[self]
     end
     
   end
