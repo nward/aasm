@@ -12,9 +12,11 @@ module AASM
         instance_eval(&block) if block
       end
 
-      def fire(obj, to_state=nil, *args)
+      def fire(obj, *args)
         transitions = @transitions.select { |t| t.from == obj.aasm_current_state }
         raise AASM::InvalidTransition, "Event '#{name}' cannot transition from '#{obj.aasm_current_state}'" if transitions.size == 0
+        to_state = args.shift if args[0].nil? || #nil check is for backwards compatability
+          (args[0].is_a?(Symbol) && obj.class.aasm_state_machine.states.include?(args[0]))
 
         next_state = nil
         transitions.each do |transition|

@@ -322,6 +322,14 @@ describe ChetanPatil do
 
     cp.aasm_current_state.should == :working
   end
+  
+  it 'should allow transition to default state if first param is not a state symbol' do
+    cp = ChetanPatil.new
+    # It's extremely counter-intuitive to have to pass nil if first param is obviously not a state
+    cp.dress!('purple', 'dressy')
+
+    cp.aasm_current_state.should == :working
+  end
 
   it 'should call on_transition method with args' do
     cp = ChetanPatil.new
