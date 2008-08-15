@@ -31,19 +31,26 @@ class Conversation
 
   aasm_event :unjunk do
   end
+  
+  aasm_event :args_test do
+    transitions :to => :junk, :from => [:needs_attention], :on_transition => :transition_method
+  end
 
   def initialize(persister)
     @persister = persister
   end
 
+  def transition_method(*args)
+    p "transition_method: #{args}"
+  end
 
   private
   def aasm_read_state
-    @persister.read_state
+    @persister.state
   end
 
   def aasm_write_state(state)
-    @persister.write_state(state)
+    @persister.state = state
   end
 
 end
