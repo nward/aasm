@@ -118,6 +118,50 @@ This example uses a few of the more complex features available.
     def buy_exotic_car_and_wear_a_combover; end
   end
 
+Multiple transitions for an event are supported, in which case you want to specify
+a :guard option which is a symbol to a method or a proc that returns a boolean
+to decide whether that transition is allowed. aasm will process transitions in order
+and the first passing guard clause is the one in effect.
+
+States also support :enter and :exit options allowing you further hooks into
+the lifecycle.
+
+== Advanced Features
+
+Arguments to an event call will be passed to on_transition method.
+
+	aasm_event :view do
+	  transitions :to => :read, :from => [:initial], :on_transition => :view_happening
+	end
+
+	def view_happening(a=nil, b=nil)
+	end
+
+Calling conversation.view(1, 2) will result in view_happening receiving a=1, b=2
+
+UNLESS...
+You are using the advanced feature of multiple :to states in which case you can
+pass the state name symbol as the first argument to the event call to control your 
+destination state.
+
+	aasm_event :view do
+	  transitions :to => [:read, :closed], :from => [:initial], :on_transition => :view_happening
+	end
+
+Now, you can call:
+	conversation.view
+-> to transition to the first :to state (:read)
+or
+	conversation.view :closed
+-> to force a transition to the :closed state
+or
+	conversation.view(1, 2)
+-> to transition to :read and receive a=1, b=2 in view_happening
+or
+	conversation.view(:closed, 1, 2)
+-> to transition to :closed and receive a=1, b=2 in view_happening
+
+
 = Other Stuff
 
 Author::  Scott Barron <scott at elitists dot net>
