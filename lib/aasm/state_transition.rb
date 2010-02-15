@@ -19,9 +19,10 @@ class AASM::SupportingClasses::StateTransition
   end
 
   def execute(obj, *args)
+    transition_args = args[1..-1]
     @on_transition.is_a?(Array) ?
-            @on_transition.each {|ot| _execute(obj, ot, *args)} :
-            _execute(obj, @on_transition, *args)
+            @on_transition.each {|ot| _execute(obj, ot, *transition_args)} :
+            _execute(obj, @on_transition, *transition_args)
   end
 
   def ==(obj)
